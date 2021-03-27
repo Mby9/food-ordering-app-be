@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
 
-@Transactional(propagation = Propagation.REQUIRED)
 @Service
 public class AuthService {
 
@@ -22,6 +21,7 @@ public class AuthService {
     @Autowired
     Validator validator;
 
+    @Transactional(propagation = Propagation.REQUIRED)
     public CustomerAuthEntity login(String contact, String password) throws AuthenticationFailedException {
 
         CustomerEntity customer = customerDAO.getUserByContact(contact);
@@ -52,6 +52,7 @@ public class AuthService {
         return customerAuthEntity;
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     public CustomerEntity logout(String token) throws AuthorizationFailedException{
 
         CustomerAuthEntity customerAuthEntity = validateToken(token);
@@ -68,5 +69,11 @@ public class AuthService {
         validator.validateAccessToken(customerAuthEntity);
         return customerAuthEntity;
 
+    }
+
+    public CustomerEntity authorizeToken(String authHeader) throws AuthorizationFailedException {
+        String token = authHeader.split("Bearer")[1];
+        CustomerAuthEntity customerAuthEntity = validateToken(token);
+        return customerAuthEntity.getCustomerEntity();
     }
 }

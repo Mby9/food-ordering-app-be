@@ -1,9 +1,11 @@
 package com.upgrad.FoodOrderingApp.service.businness;
 
 import com.upgrad.FoodOrderingApp.service.dao.CustomerDAO;
+import com.upgrad.FoodOrderingApp.service.entity.AddressEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerAuthEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
+import com.upgrad.FoodOrderingApp.service.exception.SaveAddressException;
 import com.upgrad.FoodOrderingApp.service.exception.SignUpRestrictedException;
 import com.upgrad.FoodOrderingApp.service.exception.UpdateCustomerException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,7 @@ public class Validator {
     final String PASSWORD_REGEX = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[#@$%&*!^])(?=\\S+$).{8,30}$";
     final String PHONE_NUMBER_REGEX = "^\\d{10}$";
     final String EMAIL_REGEX = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
+    final String PINCODE_REGEX = "^[1-9][0-9]{5}$";
 
     public void validateSignUpRequest(CustomerEntity customerEntity) throws SignUpRestrictedException{
 
@@ -86,6 +89,19 @@ public class Validator {
 
         if (!newPassword.matches(PASSWORD_REGEX)) {
             throw new UpdateCustomerException("UCR-001", "Weak password!");
+        }
+
+    }
+
+    public void validateSaveAddressRequest(AddressEntity address) throws SaveAddressException {
+
+        if (address.getCity() == null || address.getFlatNumber() == null || address.getLocality() == null
+            || address.getPincode() == null) {
+            throw new SaveAddressException("SAR-001", "No field can be empty");
+        }
+
+        if (!address.getPincode().matches(PINCODE_REGEX)) {
+            throw new SaveAddressException("SAR-002", "Invalid pincode");
         }
 
     }

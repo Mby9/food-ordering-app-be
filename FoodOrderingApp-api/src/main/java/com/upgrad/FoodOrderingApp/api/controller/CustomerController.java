@@ -96,9 +96,7 @@ public class CustomerController {
                                                          @RequestBody UpdateCustomerRequest request)
             throws UpdateCustomerException, AuthorizationFailedException {
 
-        String token = authHeader.split("Bearer")[1];
-        CustomerAuthEntity customerAuthEntity = authService.validateToken(token);
-        CustomerEntity customer = customerAuthEntity.getCustomerEntity();
+        CustomerEntity customer = authService.authorizeToken(authHeader);
         customerService.updateCustomer(request.getFirstName(), request.getLastName(), customer);
 
         UpdateCustomerResponse response = new UpdateCustomerResponse();
@@ -115,9 +113,7 @@ public class CustomerController {
                                                          @RequestBody UpdatePasswordRequest request)
             throws UpdateCustomerException, AuthorizationFailedException {
 
-        String token = authHeader.split("Bearer")[1];
-        CustomerAuthEntity customerAuthEntity = authService.validateToken(token);
-        CustomerEntity customer = customerAuthEntity.getCustomerEntity();
+        CustomerEntity customer = authService.authorizeToken(authHeader);
         customerService.updatePassword(request.getOldPassword(), request.getNewPassword(), customer);
 
         UpdatePasswordResponse response = new UpdatePasswordResponse();

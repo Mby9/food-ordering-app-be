@@ -1,11 +1,14 @@
 package com.upgrad.FoodOrderingApp.service.businness;
 
 import com.upgrad.FoodOrderingApp.service.dao.CustomerDAO;
+import com.upgrad.FoodOrderingApp.service.entity.AddressEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import com.upgrad.FoodOrderingApp.service.exception.SignUpRestrictedException;
 import com.upgrad.FoodOrderingApp.service.exception.UpdateCustomerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Set;
 
 @Service
 public class CustomerService {
@@ -48,5 +51,9 @@ public class CustomerService {
         customer.setPassword(hashedPassword);
 
         customerDAO.updateCustomer(customer);
+    }
+
+    public Set<AddressEntity> getAddressesForCustomer(CustomerEntity customer) {
+        return customer.getAddresses();
     }
 }

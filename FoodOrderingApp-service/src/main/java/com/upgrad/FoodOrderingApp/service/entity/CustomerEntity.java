@@ -1,6 +1,7 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
 import javax.persistence.*;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -47,6 +48,17 @@ public class CustomerEntity {
 
     public UUID getUuid() {
         return uuid;
+    }
+
+    @ManyToMany(mappedBy = "customers")
+    private Set<AddressEntity> addresses;
+
+    public Set<AddressEntity> getAddresses() {
+        return addresses;
+    }
+
+    public void setAddresses(Set<AddressEntity> addresses) {
+        this.addresses = addresses;
     }
 
     public void setUuid(UUID uuid) {
