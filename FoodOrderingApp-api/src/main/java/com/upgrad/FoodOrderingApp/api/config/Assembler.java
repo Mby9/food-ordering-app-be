@@ -1,12 +1,10 @@
 package com.upgrad.FoodOrderingApp.api.config;
 
-import com.upgrad.FoodOrderingApp.api.model.AddressList;
-import com.upgrad.FoodOrderingApp.api.model.AddressListState;
-import com.upgrad.FoodOrderingApp.api.model.SaveAddressRequest;
-import com.upgrad.FoodOrderingApp.api.model.SignupCustomerRequest;
+import com.upgrad.FoodOrderingApp.api.model.*;
 import com.upgrad.FoodOrderingApp.service.dao.StateDAO;
 import com.upgrad.FoodOrderingApp.service.entity.AddressEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
+import com.upgrad.FoodOrderingApp.service.entity.PaymentEntity;
 import com.upgrad.FoodOrderingApp.service.entity.StateEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -48,8 +46,8 @@ public class Assembler {
         return address;
     }
 
-    public List<AddressList> addressEntityToResponse(Set<AddressEntity> addressEntities) {
-        List<AddressList> addresses = new ArrayList<>();
+    public AddressListResponse addressEntityToResponse(Set<AddressEntity> addressEntities) {
+        AddressListResponse addresses = new AddressListResponse();
 
         for (AddressEntity addressEntity: addressEntities) {
 
@@ -61,17 +59,46 @@ public class Assembler {
             addressList.setPincode(addressEntity.getPincode());
             addressList.setState(stateEntityToAddressListState(addressEntity.getStateEntity()));
 
-            addresses.add(addressList);
+            addresses.addAddressesItem(addressList);
         }
 
         return addresses;
     }
 
-    private AddressListState stateEntityToAddressListState(StateEntity stateEntity) {
+    public AddressListState stateEntityToAddressListState(StateEntity stateEntity) {
+
         AddressListState state = new AddressListState();
         state.setId(stateEntity.getUuid());
         state.setStateName(stateEntity.getStateName());
 
         return state;
+    }
+
+    public StatesListResponse stateEntityListToStateListResponse(List<StateEntity> states) {
+        StatesListResponse response = new StatesListResponse();
+        for (StateEntity state: states) {
+            StatesList statesList = new StatesList();
+            statesList.setId(state.getUuid());
+            statesList.setStateName(state.getStateName());
+
+            response.addStatesItem(statesList);
+        }
+
+        return response;
+    }
+
+    public PaymentListResponse paymentEntityToPaymentListResponse(List<PaymentEntity> payments) {
+
+        PaymentListResponse response = new PaymentListResponse();
+
+        for (PaymentEntity payment: payments) {
+            PaymentResponse res = new PaymentResponse();
+            res.setId(payment.getUuid());
+            res.setPaymentName(payment.getPaymentName());
+
+            response.addPaymentMethodsItem(res);
+        }
+
+        return response;
     }
 }

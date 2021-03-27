@@ -6,6 +6,9 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "address")
+@NamedQueries({
+        @NamedQuery(name = "addressByUUID", query = "select a from address a where a.uuid=:uuid")
+})
 public class AddressEntity {
 
     @Id

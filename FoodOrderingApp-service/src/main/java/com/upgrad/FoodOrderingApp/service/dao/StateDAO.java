@@ -6,6 +6,7 @@ import com.upgrad.FoodOrderingApp.service.exception.AddressNotFoundException;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import java.util.List;
 
 public class StateDAO {
 
@@ -27,5 +28,11 @@ public class StateDAO {
         } catch (NoResultException nre) {
             throw new AddressNotFoundException("ANF-002", "No state by this id");
         }
+    }
+
+    public List<StateEntity> getAllStates() {
+        return entityManager
+                .createNamedQuery("getAllStates", StateEntity.class)
+                .getResultList();
     }
 }

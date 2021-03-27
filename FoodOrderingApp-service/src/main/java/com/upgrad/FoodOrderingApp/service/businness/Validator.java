@@ -4,15 +4,14 @@ import com.upgrad.FoodOrderingApp.service.dao.CustomerDAO;
 import com.upgrad.FoodOrderingApp.service.entity.AddressEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerAuthEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
-import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
-import com.upgrad.FoodOrderingApp.service.exception.SaveAddressException;
-import com.upgrad.FoodOrderingApp.service.exception.SignUpRestrictedException;
-import com.upgrad.FoodOrderingApp.service.exception.UpdateCustomerException;
+import com.upgrad.FoodOrderingApp.service.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.ZonedDateTime;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-public class Validator {
+class Validator {
 
     @Autowired
     CustomerService customerService;
@@ -25,7 +24,7 @@ public class Validator {
     final String EMAIL_REGEX = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
     final String PINCODE_REGEX = "^[1-9][0-9]{5}$";
 
-    public void validateSignUpRequest(CustomerEntity customerEntity) throws SignUpRestrictedException{
+    void validateSignUpRequest(CustomerEntity customerEntity) throws SignUpRestrictedException{
 
         CustomerEntity savedCustomerEntity = customerDAO.getUserByContact(customerEntity.getNumber());
         if (savedCustomerEntity != null){
@@ -51,7 +50,7 @@ public class Validator {
         }
     }
 
-    public void validateAccessToken(CustomerAuthEntity customerAuthEntity) throws AuthorizationFailedException {
+    void validateAccessToken(CustomerAuthEntity customerAuthEntity) throws AuthorizationFailedException {
 
         if (customerAuthEntity == null) {
             throw new AuthorizationFailedException("ATHR-001", "Customer is not Logged in.");
@@ -68,14 +67,14 @@ public class Validator {
         }
     }
 
-    public void validateUpdateUserRequest(String firstName) throws UpdateCustomerException {
+    void validateUpdateUserRequest(String firstName) throws UpdateCustomerException {
 
         if (firstName == null) {
             throw new UpdateCustomerException("UCR-002", "First name field should not be empty");
         }
     }
 
-    public void validateUpdatePasswordRequest(String oldPassword, String newPassword, CustomerEntity customer)
+    void validateUpdatePasswordRequest(String oldPassword, String newPassword, CustomerEntity customer)
             throws UpdateCustomerException{
 
         if (oldPassword == null || newPassword == null) {
@@ -93,7 +92,7 @@ public class Validator {
 
     }
 
-    public void validateSaveAddressRequest(AddressEntity address) throws SaveAddressException {
+    void validateSaveAddressRequest(AddressEntity address) throws SaveAddressException {
 
         if (address.getCity() == null || address.getFlatNumber() == null || address.getLocality() == null
             || address.getPincode() == null) {
@@ -104,5 +103,22 @@ public class Validator {
             throw new SaveAddressException("SAR-002", "Invalid pincode");
         }
 
+    }
+
+    void validateDeleteAddressRequest(String addressId, CustomerEntity customer)
+            throws AddressNotFoundException, AuthorizationFailedException {
+
+        if (addressId == null || "".equals(addressId)) {
+            throw new AddressNotFoundException("ANF-005", "Address id can not be empty");
+        }
+
+        Set<AddressEntity> customerAddresses = customer.getAddresses();
+        Set<String> addressIds = customerAddresses.stream()
+                .map(address -> address.getUuid().toString())
+                .collect(Collectors.toSet());
+        if (!addressIds.contains(addressId)) {
+            throw new AuthorizationFailedException("ATHR-004",
+                    "You are not authorized to view/update/delete any one else's address");
+        }
     }
 }
