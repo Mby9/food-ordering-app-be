@@ -13,12 +13,6 @@ public class StateDAO {
     @PersistenceContext
     EntityManager entityManager;
 
-    /**
-     * Get the question for the given id.
-     *
-     * @param questionId id of the required question.
-     * @return QuestionEntity if question with given id is found else null.
-     */
     public StateEntity getStateById(final String questionId) throws AddressNotFoundException {
         try {
             return entityManager
@@ -34,5 +28,14 @@ public class StateDAO {
         return entityManager
                 .createNamedQuery("getAllStates", StateEntity.class)
                 .getResultList();
+    }
+
+    public StateEntity getStateByID(final Integer stateId) {
+        try {
+            return entityManager.createNamedQuery("stateById", StateEntity.class).setParameter("id", stateId)
+                    .getSingleResult();
+        } catch(NoResultException nre) {
+            return null;
+        }
     }
 }

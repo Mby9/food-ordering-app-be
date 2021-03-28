@@ -1,5 +1,8 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 import java.util.Set;
 import java.util.UUID;
@@ -7,7 +10,9 @@ import java.util.UUID;
 @Entity
 @Table(name = "address")
 @NamedQueries({
-        @NamedQuery(name = "addressByUUID", query = "select a from address a where a.uuid=:uuid")
+        @NamedQuery(name = "addressByUUID", query = "select a from AddressEntity a where a.uuid=:uuid"),
+        @NamedQuery(name = "allAddresses", query = "select a from AddressEntity a "),
+        @NamedQuery(name = "addressById", query = "select a from AddressEntity a where a.id=:id")
 })
 public class AddressEntity {
 
@@ -32,6 +37,7 @@ public class AddressEntity {
     private String pincode;
 
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "state_id")
     private StateEntity stateEntity;
 

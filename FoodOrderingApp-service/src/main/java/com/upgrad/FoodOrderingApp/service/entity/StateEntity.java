@@ -7,7 +7,8 @@ import java.util.UUID;
 @Table(name = "state")
 @NamedQueries({
         @NamedQuery(name = "getAllStates", query = "select s from StateEntity s"),
-        @NamedQuery(name = "getStateById", query = "select s from StateEntity s where s.uuid=:uuid")
+        @NamedQuery(name = "getStateById", query = "select s from StateEntity s where s.uuid=:uuid"),
+        @NamedQuery(name = "stateById", query = "select s from StateEntity s where s.id=:id")
 })
 public class StateEntity {
 

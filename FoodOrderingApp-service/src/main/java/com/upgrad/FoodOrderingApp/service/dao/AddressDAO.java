@@ -20,12 +20,22 @@ public class AddressDAO {
     public AddressEntity getAddressByUUID(String id) {
         try {
             return entityManager
-                    .createNamedQuery("addressbyUUID", AddressEntity.class)
+                    .createNamedQuery("addressByUUID", AddressEntity.class)
                     .setParameter("uuid", id)
                     .getSingleResult();
         } catch (NoResultException nre) {
             return null;
         }
+    }
+
+    public AddressEntity getAddressById(final Integer addressId) {
+        try {
+            return entityManager.createNamedQuery("addressById", AddressEntity.class).setParameter("id", addressId)
+                    .getSingleResult();
+        } catch(NoResultException nre) {
+            return null;
+        }
+
     }
 
 }

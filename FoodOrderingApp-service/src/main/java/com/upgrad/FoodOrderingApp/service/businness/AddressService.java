@@ -11,6 +11,7 @@ import com.upgrad.FoodOrderingApp.service.exception.SaveAddressException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
@@ -47,5 +48,10 @@ public class AddressService {
 
         return stateDAO.getAllStates();
 
+    }
+
+    @Transactional
+    public AddressEntity getAddressById(final Integer addressId) {
+        return addressDAO.getAddressById(addressId);
     }
 }
