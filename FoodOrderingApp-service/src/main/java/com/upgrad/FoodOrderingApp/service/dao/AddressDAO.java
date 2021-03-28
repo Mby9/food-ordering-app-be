@@ -38,4 +38,14 @@ public class AddressDAO {
 
     }
 
+    public AddressEntity getAddressByUuid(final String addressUuid) {
+        try {
+            return entityManager.createNamedQuery("addressByUUID", AddressEntity.class).setParameter("uuid", addressUuid)
+                    .getSingleResult();
+        } catch(NoResultException nre) {
+            return null;
+        }
+
+    }
+
 }

@@ -38,4 +38,13 @@ public class StateDAO {
             return null;
         }
     }
+
+    public StateEntity getStateByUuid(final String stateUuid) {
+        try {
+            return entityManager.createNamedQuery("stateByUuid", StateEntity.class).setParameter("uuid", stateUuid)
+                    .getSingleResult();
+        } catch(NoResultException nre) {
+            return null;
+        }
+    }
 }

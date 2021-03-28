@@ -54,4 +54,9 @@ public class AddressService {
     public AddressEntity getAddressById(final Integer addressId) {
         return addressDAO.getAddressById(addressId);
     }
+
+    @Transactional
+    public AddressEntity getAddressByUuid(final String addressUuid) {
+        return addressDAO.getAddressByUuid(addressUuid);
+    }
 }

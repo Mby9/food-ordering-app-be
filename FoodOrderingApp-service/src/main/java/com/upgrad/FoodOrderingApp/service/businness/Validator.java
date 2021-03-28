@@ -11,7 +11,7 @@ import java.time.ZonedDateTime;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-class Validator {
+public class Validator {
 
     @Autowired
     CustomerService customerService;
@@ -50,7 +50,7 @@ class Validator {
         }
     }
 
-    void validateAccessToken(CustomerAuthEntity customerAuthEntity) throws AuthorizationFailedException {
+    public void validateAccessToken(CustomerAuthEntity customerAuthEntity) throws AuthorizationFailedException {
 
         if (customerAuthEntity == null) {
             throw new AuthorizationFailedException("ATHR-001", "Customer is not Logged in.");
