@@ -2,13 +2,14 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
-      <profile name="Maven default annotation processors profile" enabled="true">
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="FoodOrderingApp-api" />
         <module name="FoodOrderingApp-db" />
         <module name="FoodOrderingApp-service" />
+        <module name="FoodOrderingApp-api" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

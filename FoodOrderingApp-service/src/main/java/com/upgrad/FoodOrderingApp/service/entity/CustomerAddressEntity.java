@@ -1,58 +1,62 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
+import javax.persistence.*;
+import javax.validation.constraints.Size;
+
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import javax.persistence.*;
-import java.io.Serializable;
 
 @Entity
 @Table(name = "customer_address")
-@NamedQueries(
-        {
-                @NamedQuery(name = "customerAddressByAddressId", query = "select ca from CustomerAddressEntity ca where ca.id=:id"),
-                @NamedQuery(name = "custAddressByCustIdAddressId", query = "select ca from CustomerAddressEntity ca where ca.customer=:customer and ca.address=:address"),
-                @NamedQuery(name = "customerAddressesListByCustomerId", query = "select ca from CustomerAddressEntity ca where ca.customer = :customer")
-        }
-)
-
-
-public class CustomerAddressEntity implements Serializable {
+@NamedQueries({
+        @NamedQuery(name = "getEntityByAddressId", query = "SELECT u FROM CustomerAddressEntity u WHERE address_id=:address_id")
+})
+public class CustomerAddressEntity {
     @Id
-    @Column(name = "ID")
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private int id;
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "CUSTOMER_ID")
-    private CustomerEntity customer;
+    @JoinColumn(name = "customer_id")
+    private CustomerEntity customerEntity;
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "ADDRESS_ID")
-    private AddressEntity address;
+    @JoinColumn(name = "address_id")
+    private AddressEntity addressEntity;
 
-    public long getId() {
-        return id;
+    public String toString() {
+        String obj = "CustomerAddressEntity Object {\n";
+        obj += "  id: " + this.id + ",\n";
+        obj += "  customer_id: " + this.customerEntity + ",\n";
+        obj += "  address_id: " + this.addressEntity + ",\n";
+        obj += "}";
+        return obj;
     }
 
-    public void setId(long id) {
+    public AddressEntity getAddressEntity() {
+        return this.addressEntity;
+    }
+
+    public CustomerEntity getCustomerEntity() {
+        return this.customerEntity;
+    }
+
+    public Integer getId() {
+        return this.id;
+    }
+
+    public void setAddressEntity(AddressEntity addressEntity) {
+        this.addressEntity = addressEntity;
+    }
+
+    public void setCustomerEntity(CustomerEntity customerEntity) {
+        this.customerEntity = customerEntity;
+    }
+
+    public void setId(Integer id) {
         this.id = id;
-    }
-
-    public CustomerEntity getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(CustomerEntity customer) {
-        this.customer = customer;
-    }
-
-    public AddressEntity getAddress() {
-        return address;
-    }
-
-    public void setAddress(AddressEntity address) {
-        this.address = address;
     }
 }

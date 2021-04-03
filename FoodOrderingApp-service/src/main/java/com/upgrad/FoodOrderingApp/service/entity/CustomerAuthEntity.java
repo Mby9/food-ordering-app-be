@@ -1,98 +1,114 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.ZonedDateTime;
+
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Table(name = "customer_auth")
 @NamedQueries({
-        @NamedQuery(name = "customerAuthByAccessToken",
-                query = "select uat from CustomerAuthEntity uat where uat.accessToken = :accessToken")
+        @NamedQuery(name = "getEntityByToken", query = "SELECT u FROM CustomerAuthEntity u WHERE u.accessToken=:accessToken")
 })
 public class CustomerAuthEntity {
-
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "customer_id")
-    private CustomerEntity customerEntity;
-
     @Column(name = "uuid")
-    @NotNull
+    @Size(max = 200)
     private String uuid;
 
     @Column(name = "access_token")
-    @NotNull
+    @Size(max = 500)
     private String accessToken;
 
     @Column(name = "login_at")
-    @NotNull
     private ZonedDateTime loginAt;
 
     @Column(name = "logout_at")
     private ZonedDateTime logoutAt;
 
     @Column(name = "expires_at")
-    @NotNull
     private ZonedDateTime expiresAt;
 
-    public Integer getId() {
-        return id;
+    @ManyToOne()
+    @JoinColumn(name = "customer_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private CustomerEntity customer;
+
+    public CustomerAuthEntity() {
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public String toString() {
+        String obj = "CustomerAuthEntity Object {\n";
+        obj += "  id: " + this.id + ",\n";
+        obj += "  uuid: " + this.uuid + ",\n";
+        obj += "  accessToken: " + this.accessToken + ",\n";
+        obj += "  customer: " + this.customer + ",\n";
+        obj += "  loginAt: " + this.loginAt + ",\n";
+        obj += "  logoutAt: " + this.logoutAt + ",\n";
+        obj += "  expiresAt: " + this.expiresAt + ",\n";
+        obj += "}";
+        return obj;
     }
 
-    public CustomerEntity getCustomerEntity() {
-        return customerEntity;
-    }
-
-    public void setCustomerEntity(CustomerEntity customerEntity) {
-        this.customerEntity = customerEntity;
-    }
-
-    public String getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
-
-    public String getAccessToken() {
-        return accessToken;
-    }
-
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
-    }
-
-    public ZonedDateTime getLoginAt() {
-        return loginAt;
-    }
-
-    public void setLoginAt(ZonedDateTime loginAt) {
-        this.loginAt = loginAt;
+    public ZonedDateTime getExpiresAt() {
+        return this.expiresAt;
     }
 
     public ZonedDateTime getLogoutAt() {
-        return logoutAt;
+        return this.logoutAt;
+    }
+
+    public ZonedDateTime getLoginAt() {
+        return this.loginAt;
+    }
+
+    public CustomerEntity getCustomer() {
+        return this.customer;
+    }
+
+    public String getAccessToken() {
+        return this.accessToken;
+    }
+
+    public String getUuid() {
+        return this.uuid;
+    }
+
+    public Integer getId() {
+        return this.id;
+    }
+
+    public void setExpiresAt(ZonedDateTime expiresAt) {
+        this.expiresAt = expiresAt;
     }
 
     public void setLogoutAt(ZonedDateTime logoutAt) {
         this.logoutAt = logoutAt;
     }
 
-    public ZonedDateTime getExpiresAt() {
-        return expiresAt;
+    public void setLoginAt(ZonedDateTime loginAt) {
+        this.loginAt = loginAt;
     }
 
-    public void setExpiresAt(ZonedDateTime expiresAt) {
-        this.expiresAt = expiresAt;
+    public void setCustomer(CustomerEntity customer) {
+        this.customer = customer;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 }

@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.UUID;
 
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -39,7 +40,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 public class AddressControllerTest {
-
     @Autowired
     private MockMvc mockMvc;
 
@@ -200,7 +200,7 @@ public class AddressControllerTest {
         when(mockAddressService.deleteAddress(addressEntity)).thenReturn(deletedAddressEntity);
 
         mockMvc
-                .perform(delete("/address/82849cd5-106e-4b34-b9bf-94954c6ff527")
+                .perform(delete("/address/delete/82849cd5-106e-4b34-b9bf-94954c6ff527")
                         .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                         .header("authorization", "Bearer database_accesstoken2")
                         .content("{\"flat_building_name\":\"xyz\", \"locality\":\"abc\", \"city\":\"pqr\", \"pincode\":\"100000\", \"state_uuid\":\"c860e78a-a29b-11e8-9a3a-720006ceb890\"}"))

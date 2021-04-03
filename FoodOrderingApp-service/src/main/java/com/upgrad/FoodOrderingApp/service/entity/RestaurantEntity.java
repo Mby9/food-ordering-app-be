@@ -1,89 +1,69 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.Set;
 
+
+@SuppressWarnings("ALL")
 @Entity
-@Table(name = "restaurant")
-@NamedQueries(
-        {
-                @NamedQuery(name = "allRestaurants", query = "select r from RestaurantEntity r order by r.customerRating desc"),
-                @NamedQuery(name = "findByName", query = "select r from RestaurantEntity  r where lower(r.restaurantName) like :restaurantName order by r.restaurantName"),
-                @NamedQuery(name = "findRestaurantByUUId",query = "select r from RestaurantEntity r where lower(r.uuid) = :restaurantUUID")
-        }
-)
+@Table(name = "restaurant", schema = "public", catalog = "restaurantdb")
+@NamedQueries({
 
-public class RestaurantEntity implements Serializable {
+        @NamedQuery(name = "restaurantsByRating", query = "SELECT r FROM RestaurantEntity r ORDER BY r.customerRating DESC"),
+        @NamedQuery(name = "getRestaurantByUuid", query = "SELECT r FROM RestaurantEntity r WHERE r.uuid = :uuid"),
+        @NamedQuery(name = "restaurantsByName", query = "SELECT r FROM  RestaurantEntity r WHERE LOWER(r.restaurantName) LIKE :restaurant_name_low"),
+})
+public class RestaurantEntity {
 
     @Id
-    @Column(name = "ID")
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Integer id;
 
-    @Column(name = "UUID")
-    @NotNull
+    @Column(name = "uuid")
     @Size(max = 200)
+    @NotNull
     private String uuid;
 
-    @Column(name = "RESTAURANT_NAME")
-    @NotNull
+    @Column(name = "restaurant_name")
     @Size(max = 50)
+    @NotNull
     private String restaurantName;
 
-    @Column(name = "PHOTO_URL")
-    @NotNull
+    @Column(name = "photo_url")
     @Size(max = 255)
     private String photoUrl;
 
-    @Column(name = "CUSTOMER_RATING")
+    @Column(name = "customer_rating")
     @NotNull
-    private BigDecimal customerRating;
+    private double customerRating;
 
-    @Column(name = "NUMBER_OF_CUSTOMERS_RATED")
+    @Column(name = "average_price_for_two")
     @NotNull
-    private Integer numCustomersRated;
+    private Integer averagePriceForTwo;
 
-    @Column(name = "AVERAGE_PRICE_FOR_TWO")
+    @Column(name = "number_of_customers_rated")
     @NotNull
-    private Integer avgPriceForTwo;
+    private Integer numberOfCustomersRated;
 
-    @ManyToOne
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "address_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "ADDRESS_ID")
-    private AddressEntity address;
+    private AddressEntity addressId;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "restaurant_category",
-            joinColumns = @JoinColumn(name = "restaurant_id", referencedColumnName="id", nullable = false),
-            inverseJoinColumns = @JoinColumn(name = "category_id", referencedColumnName="id", nullable = false)
-    )
-    private Set<CategoryEntity> categoryEntities = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "restaurant_item",
-            joinColumns = @JoinColumn(name = "restaurant_id", referencedColumnName="id", nullable = false),
-            inverseJoinColumns = @JoinColumn(name = "item_id", referencedColumnName="id", nullable = false)
-    )
-
-    public long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
+
 
     public String getUuid() {
         return uuid;
@@ -93,6 +73,7 @@ public class RestaurantEntity implements Serializable {
         this.uuid = uuid;
     }
 
+
     public String getRestaurantName() {
         return restaurantName;
     }
@@ -100,6 +81,7 @@ public class RestaurantEntity implements Serializable {
     public void setRestaurantName(String restaurantName) {
         this.restaurantName = restaurantName;
     }
+
 
     public String getPhotoUrl() {
         return photoUrl;
@@ -109,54 +91,40 @@ public class RestaurantEntity implements Serializable {
         this.photoUrl = photoUrl;
     }
 
-    public BigDecimal getCustomerRating() {
+
+    public double getCustomerRating() {
         return customerRating;
     }
 
-    public void setCustomerRating(BigDecimal customerRating) {
+    public void setCustomerRating(double customerRating) {
         this.customerRating = customerRating;
     }
 
-    public Integer getNumCustomersRated() {
-        return numCustomersRated;
+
+    public Integer getAvgPrice() {
+        return averagePriceForTwo;
     }
 
-    public void setNumCustomersRated(Integer numCustomersRated) {
-        this.numCustomersRated = numCustomersRated;
+    public void setAvgPrice(Integer averagePriceForTwo) {
+        this.averagePriceForTwo = averagePriceForTwo;
     }
 
-    public Integer getAvgPriceForTwo() {
-        return avgPriceForTwo;
+
+    public Integer getNumberCustomersRated() {
+        return numberOfCustomersRated;
     }
 
-    public void setAvgPriceForTwo(Integer avgPriceForTwo) {
-        this.avgPriceForTwo = avgPriceForTwo;
+    public void setNumberCustomersRated(Integer numberOfCustomersRated) {
+        this.numberOfCustomersRated = numberOfCustomersRated;
     }
+
 
     public AddressEntity getAddress() {
-        return address;
+        return addressId;
     }
 
-    public void setAddress(AddressEntity address) {
-        this.address = address;
-    }
-
-    public Set<CategoryEntity> getCategoryEntities() {
-        return categoryEntities;
-    }
-
-    public void setCategoryEntities(Set<CategoryEntity> categoryEntities) {
-        this.categoryEntities = categoryEntities;
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().append(this).hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+    public void setAddress(AddressEntity addressId) {
+        this.addressId = addressId;
     }
 
 }

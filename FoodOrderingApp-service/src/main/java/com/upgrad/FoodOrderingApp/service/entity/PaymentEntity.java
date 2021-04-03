@@ -1,27 +1,41 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
 import javax.persistence.*;
-import java.util.UUID;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "payment")
 @NamedQueries({
-        @NamedQuery(name = "getPayments", query = "select p from PaymentEntity p"),
-        @NamedQuery(name = "paymentById", query = "select p from PaymentEntity p where p.id=:id"),
-        @NamedQuery(name = "paymentByUuid", query = "select p from PaymentEntity p where p.uuid=:uuid"),
+        @NamedQuery(name = "getAllPaymentMethods", query = "SELECT p from PaymentEntity p"),
+        @NamedQuery(name = "getPaymentMethodByUuid", query = "SELECT p from PaymentEntity p where p.uuid = :paymentUuid")
 })
-public class PaymentEntity {
+public class PaymentEntity implements Serializable {
 
     @Id
-    @Column(name = "id")
+    @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "uuid")
-    private UUID uuid;
+    @Column(name = "UUID")
+    @Size(max = 200)
+    @NotNull
+    private String uuid;
 
-    @Column(name = "payment_name")
+    @Column(name = "PAYMENT_NAME")
+    @Size(max = 255)
     private String paymentName;
+
+
+    public PaymentEntity() {
+
+    }
+
+    public PaymentEntity(String uuid, String paymentName) {
+        this.uuid = uuid;
+        this.paymentName = paymentName;
+    }
 
     public Integer getId() {
         return id;
@@ -31,11 +45,11 @@ public class PaymentEntity {
         this.id = id;
     }
 
-    public UUID getUuid() {
+    public String getUuid() {
         return uuid;
     }
 
-    public void setUuid(UUID uuid) {
+    public void setUuid(String uuid) {
         this.uuid = uuid;
     }
 

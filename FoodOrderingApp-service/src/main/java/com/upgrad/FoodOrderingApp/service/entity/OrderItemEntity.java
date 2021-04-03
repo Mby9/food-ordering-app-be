@@ -9,60 +9,50 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "order_item")
-@NamedQueries(
-        {
-                @NamedQuery(name = "orderItemById", query = "select o from OrderItemEntity o where o.id=:id"),
-                @NamedQuery(name = "itemsByOrder", query = "select o from OrderItemEntity o where o.orders=:order"),
-        }
-)
-
+@NamedQueries({
+        @NamedQuery(name = "getItemsByOrders", query = "select o from OrderItemEntity o where o.order = :order"),
+        @NamedQuery(name = "getOrderItemByOrder", query = "select o from OrderItemEntity o where o.order = :order")
+})
 public class OrderItemEntity implements Serializable {
 
     @Id
     @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Integer id;
 
-    @ManyToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ORDER_ID")
-    private OrdersEntity orders;
-
-    @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @NotNull
+    private OrdersEntity order;
+
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ITEM_ID")
+    @NotNull
     private ItemEntity item;
 
     @Column(name = "QUANTITY")
     @NotNull
     private Integer quantity;
 
-    @Column(name="PRICE")
+    @Column(name = "PRICE")
     @NotNull
     private Integer price;
 
-    public long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public OrdersEntity getOrders() {
-        return orders;
+    public OrdersEntity getOrder() {
+        return order;
     }
 
-    public void setOrders(OrdersEntity orders) {
-        this.orders = orders;
-    }
-
-    public ItemEntity getItem() {
-        return item;
-    }
-
-    public void setItem(ItemEntity item) {
-        this.item = item;
+    public void setOrder(OrdersEntity order) {
+        this.order = order;
     }
 
     public Integer getQuantity() {
@@ -79,5 +69,13 @@ public class OrderItemEntity implements Serializable {
 
     public void setPrice(Integer price) {
         this.price = price;
+    }
+
+    public ItemEntity getItem() {
+        return item;
+    }
+
+    public void setItem(ItemEntity item) {
+        this.item = item;
     }
 }

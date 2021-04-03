@@ -4,41 +4,47 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.UUID;
 
 @Entity
 @Table(name = "coupon")
-@NamedQueries(
-        {
-                @NamedQuery(name = "couponByUuid", query = "select c from CouponEntity c where c.uuid=:uuid"),
-                @NamedQuery(name = "couponById", query = "select c from CouponEntity c where c.id=:id"),
-                @NamedQuery(name = "couponByName", query = "select c from CouponEntity c where c.couponName=:couponName")
-        }
-)
-
+@NamedQueries({
+        @NamedQuery(name = "getCouponByCouponName", query = "SELECT c from CouponEntity c where c.couponName = :couponName"),
+        @NamedQuery(name = "getCouponByCouponUuid", query = "SELECT c from CouponEntity c where c.uuid = :couponUuid")
+})
 public class CouponEntity implements Serializable {
-
     @Id
     @Column(name = "ID")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Integer id;
 
     @Column(name = "UUID")
     @Size(max = 200)
+    @NotNull
     private String uuid;
 
     @Column(name = "COUPON_NAME")
+    @Size(max = 255)
     private String couponName;
 
-    @Column(name="PERCENT")
+    @Column(name = "PERCENT")
     @NotNull
     private Integer percent;
 
-    public long getId() {
+    public CouponEntity() {
+
+    }
+
+    public CouponEntity(String couponId, String myCoupon, int percent) {
+        this.uuid = couponId;
+        this.couponName = myCoupon;
+        this.percent = percent;
+    }
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -65,4 +71,5 @@ public class CouponEntity implements Serializable {
     public void setPercent(Integer percent) {
         this.percent = percent;
     }
+
 }

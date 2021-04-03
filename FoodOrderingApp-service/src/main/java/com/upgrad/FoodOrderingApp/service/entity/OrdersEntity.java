@@ -1,79 +1,84 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.time.ZonedDateTime;
+import java.util.Date;
 
 @Entity
 @Table(name = "orders")
-@NamedQueries(
-        {
-                @NamedQuery(name = "ordersByUuid",query="select o from OrdersEntity o where o.uuid=:uuid"),
-                @NamedQuery(name = "ordersById", query = "select o from OrdersEntity o where o.id=:id"),
-                @NamedQuery(name = "ordersByCustomer", query = "select o from OrdersEntity o where o.customer=:customer order by o.date desc"),
-                @NamedQuery(name = "ordersByRestaurant", query = "select o from OrdersEntity o where o.restaurant=:restaurant order by o.date desc"),
-        }
-)
-
-
+@NamedQueries({
+        @NamedQuery(name = "getOrdersByCustomer", query = "select o from OrdersEntity o where o.customer = :customer"),
+        @NamedQuery(name = "getOrdersByRestaurant", query = "select o from OrdersEntity o where o.restaurant = :restaurant")
+})
 public class OrdersEntity implements Serializable {
 
     @Id
     @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Integer id;
 
     @Column(name = "UUID")
     @Size(max = 200)
+    @NotNull
     private String uuid;
 
-    @Column(name="BILL")
+    @Column(name = "BILL")
     @NotNull
-    private BigDecimal bill;
+    private double bill;
 
-    @ManyToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "COUPON_ID")
     private CouponEntity coupon;
 
-    @Column(name="DISCOUNT")
-    private BigDecimal discount;
+    @Column(name = "DISCOUNT")
+    private double discount;
 
-    @Column(name="DATE")
+    @Column(name = "DATE")
     @NotNull
-    private ZonedDateTime date;
+    private Date date;
 
-    @ManyToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "CUSTOMER_ID")
+    @NotNull
+    private CustomerEntity customer;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "ADDRESS_ID")
+    @NotNull
+    private AddressEntity address;
+
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "PAYMENT_ID")
     private PaymentEntity payment;
 
-    @ManyToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "CUSTOMER_ID")
-    private CustomerEntity customer;
-
-    @ManyToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "ADDRESS_ID")
-    private AddressEntity address;
-
-    @ManyToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "RESTAURANT_ID")
+    @NotNull
     private RestaurantEntity restaurant;
 
-    public long getId() {
+    public OrdersEntity() {
+
+    }
+
+    public OrdersEntity(String uuid, Double bill, CouponEntity couponEntity, Double discount, Date orderDate, PaymentEntity paymentEntity, CustomerEntity customerEntity, AddressEntity addressEntity, RestaurantEntity restaurantEntity) {
+        this.uuid = uuid;
+        this.bill = bill;
+        this.coupon = couponEntity;
+        this.discount = discount;
+        this.date = orderDate;
+        this.payment = paymentEntity;
+        this.customer = customerEntity;
+        this.address = addressEntity;
+        this.restaurant = restaurantEntity;
+    }
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -85,11 +90,11 @@ public class OrdersEntity implements Serializable {
         this.uuid = uuid;
     }
 
-    public BigDecimal getBill() {
+    public double getBill() {
         return bill;
     }
 
-    public void setBill(BigDecimal bill) {
+    public void setBill(double bill) {
         this.bill = bill;
     }
 
@@ -101,28 +106,20 @@ public class OrdersEntity implements Serializable {
         this.coupon = coupon;
     }
 
-    public BigDecimal getDiscount() {
+    public double getDiscount() {
         return discount;
     }
 
-    public void setDiscount(BigDecimal discount) {
+    public void setDiscount(double discount) {
         this.discount = discount;
     }
 
-    public ZonedDateTime getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(ZonedDateTime date) {
+    public void setDate(Date date) {
         this.date = date;
-    }
-
-    public PaymentEntity getPayment() {
-        return payment;
-    }
-
-    public void setPayment(PaymentEntity payment) {
-        this.payment = payment;
     }
 
     public CustomerEntity getCustomer() {
@@ -139,6 +136,14 @@ public class OrdersEntity implements Serializable {
 
     public void setAddress(AddressEntity address) {
         this.address = address;
+    }
+
+    public PaymentEntity getPayment() {
+        return payment;
+    }
+
+    public void setPayment(PaymentEntity payment) {
+        this.payment = payment;
     }
 
     public RestaurantEntity getRestaurant() {

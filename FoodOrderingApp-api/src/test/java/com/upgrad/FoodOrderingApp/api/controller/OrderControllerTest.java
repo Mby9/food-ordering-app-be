@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.upgrad.FoodOrderingApp.api.model.CustomerOrderResponse;
 import com.upgrad.FoodOrderingApp.api.model.ItemQuantity;
 import com.upgrad.FoodOrderingApp.api.model.SaveOrderRequest;
+import com.upgrad.FoodOrderingApp.service.businness.*;
+import com.upgrad.FoodOrderingApp.service.entity.*;
 import com.upgrad.FoodOrderingApp.service.exception.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,6 +22,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.UUID;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -74,7 +77,7 @@ public class OrderControllerTest {
         when(mockOrderService.getCouponByCouponId(saveOrderRequest.getCouponId().toString()))
                 .thenReturn(new CouponEntity());
 
-        final OrderEntity orderEntity = new OrderEntity();
+        final OrdersEntity orderEntity = new OrdersEntity();
         final String orderId = UUID.randomUUID().toString();
         orderEntity.setUuid(orderId);
         when(mockOrderService.saveOrder(any())).thenReturn(orderEntity);
@@ -358,7 +361,7 @@ public class OrderControllerTest {
         when(mockCustomerService.getCustomer("database_accesstoken2"))
                 .thenReturn(customerEntity);
 
-        final OrderEntity orderEntity = getOrderEntity(customerEntity);
+        final OrdersEntity orderEntity = getOrderEntity(customerEntity);
         when(mockOrderService.getOrdersByCustomers(customerId))
                 .thenReturn(Collections.singletonList(orderEntity));
 
@@ -575,7 +578,7 @@ public class OrderControllerTest {
         return request;
     }
 
-    private OrderEntity getOrderEntity(final CustomerEntity customerEntity) {
+    private OrdersEntity getOrderEntity(final CustomerEntity customerEntity) {
         final String stateId = UUID.randomUUID().toString();
         final StateEntity stateEntity = new StateEntity(stateId, "someState");
 
@@ -602,9 +605,7 @@ public class OrderControllerTest {
 
         final String orderId = UUID.randomUUID().toString();
         final Date orderDate = new Date();
-        return new OrderEntity(orderId, 200.50, couponEntity, 10.0,
+        return new OrdersEntity(orderId, 200.50, couponEntity, 10.0,
                 orderDate, paymentEntity, customerEntity, addressEntity, restaurantEntity);
     }
-
-
 }

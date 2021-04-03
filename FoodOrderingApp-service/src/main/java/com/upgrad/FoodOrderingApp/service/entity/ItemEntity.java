@@ -1,48 +1,61 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
-import com.upgrad.FoodOrderingApp.api.model.ItemList;
+import com.upgrad.FoodOrderingApp.service.common.ItemType;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.io.Serializable;
+import java.util.UUID;
+
+@NamedNativeQueries({
+        // Using native query as named queries do not support LIMIT in nested statements.
+        @NamedNativeQuery(
+                name = "topFivePopularItemsByRestaurant",
+                query =
+                        "select * from item where id in "
+                                + "(select ITEM_ID from order_item where ORDER_ID in "
+                                + "(select ID from orders where RESTAURANT_ID = ? ) "
+                                + "group by order_item.ITEM_ID "
+                                + "order by (count(order_item.ORDER_ID)) "
+                                + "desc LIMIT 5)",
+                resultClass = ItemEntity.class)
+})
 
 @Entity
-@Table(name = "item")
+@Table(name = "item", schema = "public", catalog = "restaurantdb")
 @NamedQueries(
-        {
-                @NamedQuery(name = "itemByUuid", query = "select i from ItemEntity i where i.uuid=:uuid"),
-                @NamedQuery(name = "itemById", query = "select i from ItemEntity i where i.id=:id")
+        {@NamedQuery(name = "getItemsByUuid", query = "select i from ItemEntity i where i.uuid =:uuid"),
+
+                @NamedQuery(name = "getAllItems", query = "select i from ItemEntity i "),
+                @NamedQuery(name = "itemByItemId", query = "select i from ItemEntity i where i.id =:id"),
         }
 )
-
-public class ItemEntity implements Serializable {
-
+public class ItemEntity {
     @Id
-    @Column(name = "ID")
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Integer id;
 
-    @Column(name = "UUID")
+    @Column(name = "uuid")
     @Size(max = 200)
     private String uuid;
 
-    @Column(name = "ITEM_NAME")
-    @NotNull
-    @Size(max = 30)
+    @Column(name = "item_name")
+    @Size(max = 200)
     private String itemName;
 
-    @Column(name="PRICE")
-    @NotNull
+    @Column(name = "price")
     private Integer price;
 
-    private ItemList.ItemTypeEnum type;
+    @Column(name = "type")
+    @Size(max = 10)
+    private ItemType type;
 
-    public long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -70,12 +83,13 @@ public class ItemEntity implements Serializable {
         this.price = price;
     }
 
-    public ItemList.ItemTypeEnum getType() {
+    public ItemType getType() {
         return type;
     }
 
-    public void setType(ItemList.ItemTypeEnum type) {
+    public void setType(ItemType type) {
         this.type = type;
     }
-}
 
+
+}

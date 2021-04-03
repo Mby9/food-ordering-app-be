@@ -1,51 +1,59 @@
 package com.upgrad.FoodOrderingApp.service.dao;
 
-import com.upgrad.FoodOrderingApp.service.entity.AddressEntity;
+
 import org.springframework.stereotype.Repository;
 
+import com.upgrad.FoodOrderingApp.service.entity.StateEntity;
+import com.upgrad.FoodOrderingApp.service.entity.AddressEntity;
+
+import javax.persistence.PersistenceContext;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
+import java.util.List;
+import java.util.ArrayList;
 
 @Repository
 public class AddressDAO {
-
     @PersistenceContext
-    EntityManager entityManager;
+    private EntityManager entityManager;
 
-    public void save(AddressEntity address) {
-        entityManager.persist(address);
+    /* fetches all the states in the db from the state table */
+    public List<StateEntity> getAllStates() {
+        List<StateEntity> listOfStates = entityManager.createNamedQuery("getAllStates", StateEntity.class).getResultList();
+        return listOfStates;
     }
 
-    public AddressEntity getAddressByUUID(String id) {
+    /* fetches all the addresses saved in the address table */
+    public List<AddressEntity> getAllAddresses() {
+        List<AddressEntity> listOfAddresses = entityManager.createNamedQuery("selectAllAddresses", AddressEntity.class).getResultList();
+        return listOfAddresses;
+    }
+
+    /* to fetch a single state entity based on uuid */
+    public StateEntity getStateByUuid(String uuid) {
         try {
-            return entityManager
-                    .createNamedQuery("addressByUUID", AddressEntity.class)
-                    .setParameter("uuid", id)
-                    .getSingleResult();
-        } catch (NoResultException nre) {
+            return entityManager.createNamedQuery("getStateByUuid", StateEntity.class).setParameter("uuid", uuid).getSingleResult();
+        } catch (NoResultException nRE) {
             return null;
         }
     }
 
-    public AddressEntity getAddressById(final Integer addressId) {
+    /* to fetch a single address entity based on uuid */
+    public AddressEntity getAddressByUuid(String uuid) {
         try {
-            return entityManager.createNamedQuery("addressById", AddressEntity.class).setParameter("id", addressId)
-                    .getSingleResult();
-        } catch(NoResultException nre) {
+            return entityManager.createNamedQuery("getAddressByUuid", AddressEntity.class).setParameter("uuid", uuid).getSingleResult();
+        } catch (NoResultException nRE) {
             return null;
         }
-
     }
 
-    public AddressEntity getAddressByUuid(final String addressUuid) {
-        try {
-            return entityManager.createNamedQuery("addressByUUID", AddressEntity.class).setParameter("uuid", addressUuid)
-                    .getSingleResult();
-        } catch(NoResultException nre) {
-            return null;
-        }
-
+    /*  to insert/create a new address entitty in the address table */
+    public void createNewAddressEntity(AddressEntity newAddress) {
+        this.entityManager.persist(newAddress);
     }
 
+    /*  to delete a single entity based on uuid from the address table */
+    public void deleteAddressEntityByUuid(String uuid) {
+        entityManager.createQuery("DELETE FROM AddressEntity u WHERE u.uuid=:uuid").setParameter("uuid", uuid).executeUpdate();
+    }
 }

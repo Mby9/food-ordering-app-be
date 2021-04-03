@@ -1,7 +1,7 @@
 package com.upgrad.FoodOrderingApp.service.dao;
 
-import com.upgrad.FoodOrderingApp.service.entity.OrderItemEntity;
 import com.upgrad.FoodOrderingApp.service.entity.OrdersEntity;
+import com.upgrad.FoodOrderingApp.service.entity.OrderItemEntity;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -15,17 +15,23 @@ public class OrderItemDAO {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public List<OrderItemEntity> getItemsByOrder(OrdersEntity order) {
+    //Get Items by Order
+    public List<OrderItemEntity> getItemsByOrders(OrdersEntity orderEntity) {
         try {
-            return entityManager.createNamedQuery("itemsByOrder", OrderItemEntity.class).setParameter("order", order)
-                    .getResultList();
+            List<OrderItemEntity> orderItemEntities = entityManager.createNamedQuery("getItemsByOrders", OrderItemEntity.class).setParameter("order", orderEntity).getResultList();
+            return orderItemEntities;
         } catch (NoResultException nre) {
             return null;
         }
     }
 
-    public OrderItemEntity createOrderItemEntity(OrderItemEntity orderItemEntity) {
-        entityManager.persist(orderItemEntity);
-        return orderItemEntity;
+    //get order items by order
+    public List<OrderItemEntity> getOrderItemsByOrder(OrdersEntity orderEntity) {
+        try {
+            List<OrderItemEntity> orderItemEntities = entityManager.createNamedQuery("getOrderItemByOrder", OrderItemEntity.class).setParameter("order", orderEntity).getResultList();
+            return orderItemEntities;
+        } catch (NoResultException nre) {
+            return null;
+        }
     }
 }

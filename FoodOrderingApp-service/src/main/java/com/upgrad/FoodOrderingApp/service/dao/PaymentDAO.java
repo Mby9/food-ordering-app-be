@@ -10,30 +10,24 @@ import java.util.List;
 
 @Repository
 public class PaymentDAO {
-
     @PersistenceContext
-    EntityManager entityManager;
+    private EntityManager entityManager;
 
-    public List<PaymentEntity> getPayments() {
 
-        return entityManager.createNamedQuery("getPayments", PaymentEntity.class)
-                .getResultList();
-
-    }
-
-    public PaymentEntity getPaymentById(Long paymentId) {
+    //To get Payment Methods from the db
+    public List<PaymentEntity> getPaymentMethods() {
         try {
-            return this.entityManager.createNamedQuery("paymentById", PaymentEntity.class).setParameter("id", paymentId)
-                    .getSingleResult();
+            return entityManager.createNamedQuery("getAllPaymentMethods", PaymentEntity.class).getResultList();
         } catch (NoResultException nre) {
             return null;
         }
     }
 
-    public PaymentEntity getPaymentByUuid(String uuid) {
+    //To get Payment By UUID from the db
+    public PaymentEntity getPaymentMethodByUUID(final String paymentUuid) {
         try {
-            return this.entityManager.createNamedQuery("paymentByUuid", PaymentEntity.class).setParameter("uuid", uuid)
-                    .getSingleResult();
+            return entityManager.createNamedQuery("getPaymentMethodByUuid", PaymentEntity.class)
+                    .setParameter("paymentUuid", paymentUuid).getSingleResult();
         } catch (NoResultException nre) {
             return null;
         }

@@ -4,28 +4,42 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
-import java.util.Set;
-import java.util.UUID;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "address")
 @NamedQueries({
-        @NamedQuery(name = "addressByUUID", query = "select a from AddressEntity a where a.uuid=:uuid"),
-        @NamedQuery(name = "allAddresses", query = "select a from AddressEntity a "),
-        @NamedQuery(name = "addressById", query = "select a from AddressEntity a where a.id=:id")
+        @NamedQuery(name = "selectAllAddresses", query = "SELECT u FROM AddressEntity u"),
+        @NamedQuery(name = "getAddressByUuid", query = "SELECT u FROM AddressEntity u WHERE u.uuid=:uuid")
 })
 public class AddressEntity {
 
+    public AddressEntity() {
+    }
+
+    public AddressEntity(String uuid, String flatBuilNumber, String locality, String city, String pincode, StateEntity stateEntityId) {
+        this.uuid = uuid;
+        this.flatBuildingNumber = flatBuilNumber;
+        this.locality = locality;
+        this.city = city;
+        this.pincode = pincode;
+        this.state = stateEntityId;
+        return;
+    }
+
+
     @Id
-    @Column
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private int id;
 
-    @Column(name = "uuid")
-    private UUID uuid;
+    @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "state_id")
+    private StateEntity state;
 
-    @Column(name = "flat_buil_number")
-    private String flatNumber;
+    @Column(name = "active")
+    private int active;
 
     @Column(name = "locality")
     private String locality;
@@ -36,90 +50,87 @@ public class AddressEntity {
     @Column(name = "pincode")
     private String pincode;
 
-    @ManyToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "state_id")
-    private StateEntity stateEntity;
+    @Column(name = "uuid")
+    private String uuid;
 
-    @Column(name = "active")
-    private Integer active;
+    @Column(name = "flat_buil_number")
+    private String flatBuildingNumber;
 
-    @ManyToMany
-    @JoinTable(
-            name = "customer_address",
-            joinColumns = @JoinColumn(name = "address_id"),
-            inverseJoinColumns = @JoinColumn(name = "customer_id"))
-    Set<CustomerEntity> customers;
-
-    public Set<CustomerEntity> getCustomers() {
-        return customers;
+    public String getFlatBuilNo() {
+        return this.flatBuildingNumber;
     }
 
-    public void setCustomers(Set<CustomerEntity> customers) {
-        this.customers = customers;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public UUID getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(UUID uuid) {
-        this.uuid = uuid;
-    }
-
-    public String getFlatNumber() {
-        return flatNumber;
-    }
-
-    public void setFlatNumber(String flatNumber) {
-        this.flatNumber = flatNumber;
-    }
-
-    public String getLocality() {
-        return locality;
-    }
-
-    public void setLocality(String locality) {
-        this.locality = locality;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
+    public String getUuid() {
+        return this.uuid;
     }
 
     public String getPincode() {
-        return pincode;
+        return this.pincode;
+    }
+
+    public String getCity() {
+        return this.city;
+    }
+
+    public String getLocality() {
+        return this.locality;
+    }
+
+    public int getActive() {
+        return this.active;
+    }
+
+    public StateEntity getState() {
+        return this.state;
+    }
+
+    public int getId() {
+        return this.id;
+    }
+
+    public void setFlatBuilNo(String flatBuildingNumber) {
+        this.flatBuildingNumber = flatBuildingNumber;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     public void setPincode(String pincode) {
         this.pincode = pincode;
     }
 
-    public StateEntity getStateEntity() {
-        return stateEntity;
+    public void setCity(String city) {
+        this.city = city;
     }
 
-    public void setStateEntity(StateEntity stateEntity) {
-        this.stateEntity = stateEntity;
+    public void setLocality(String locality) {
+        this.locality = locality;
     }
 
-    public Integer getActive() {
-        return active;
-    }
-
-    public void setActive(Integer active) {
+    public void setActive(int active) {
         this.active = active;
+    }
+
+    public void setState(StateEntity state) {
+        this.state = state;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String toString() {
+        String obj = "AddressEntity Object {\n";
+        obj += "  id: " + this.id + ",\n";
+        obj += "  state: " + this.state + ",\n";
+        obj += "  active: " + this.active + ",\n";
+        obj += "  locality: " + this.locality + ",\n";
+        obj += "  city: " + this.city + ",\n";
+        obj += "  pincode: " + this.pincode + ",\n";
+        obj += "  uuid: " + this.uuid + ",\n";
+        obj += "  flat_buil_number: " + this.flatBuildingNumber + ",\n";
+        obj += "}";
+        return obj;
     }
 }

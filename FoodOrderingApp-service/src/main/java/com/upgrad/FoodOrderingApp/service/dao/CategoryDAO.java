@@ -9,34 +9,31 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Repository
+@SuppressWarnings("all")
 public class CategoryDAO {
+
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    public CategoryEntity getCategoryById(final Integer categoryId){
+    public CategoryEntity getCategoryByUuid(String uuid) {
         try {
-            return entityManager.createNamedQuery("categoryById", CategoryEntity.class).setParameter("id", categoryId)
-                    .getSingleResult();
-        } catch(NoResultException nre) {
+            CategoryEntity categoryEntity = entityManager.createNamedQuery("getCategoryByUuid", CategoryEntity.class).setParameter("uuid", uuid).getSingleResult();
+            return categoryEntity;
+        } catch (NoResultException nre) {
             return null;
         }
     }
 
-    public CategoryEntity getCategoryByUUId(final String categoryUUId){
+    //To get list categories  from the database if no result it returns null.
+    public List<CategoryEntity> getAllCategoriesOrderedByName() {
         try {
-            return entityManager.createNamedQuery("categoryByUuid", CategoryEntity.class).setParameter("uuid", categoryUUId)
-                    .getSingleResult();
-        } catch(NoResultException nre) {
+            List<CategoryEntity> categoryEntities = entityManager.createNamedQuery("getAllCategoriesOrderedByName", CategoryEntity.class).getResultList();
+            return categoryEntities;
+        } catch (NoResultException nre) {
             return null;
         }
     }
 
-    public List<CategoryEntity> getAllCategories(){
-        try {
-            return entityManager.createNamedQuery("allCategories", CategoryEntity.class).getResultList();
-        } catch(NoResultException nre) {
-            return null;
-        }
-    }
+
 }

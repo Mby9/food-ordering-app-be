@@ -6,28 +6,29 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import java.util.UUID;
 
 @Repository
 public class CouponDAO {
-
     @PersistenceContext
     private EntityManager entityManager;
 
-    public CouponEntity getCouponById(Long couponId) {
+
+    //To get Coupon by Coupon Name from the db
+    public CouponEntity getCouponByName(final String couponName) {
         try {
-            return entityManager.createNamedQuery("couponById", CouponEntity.class).setParameter("id", couponId)
-                    .getSingleResult();
-        } catch(NoResultException nre) {
+            return entityManager.createNamedQuery("getCouponByCouponName", CouponEntity.class)
+                    .setParameter("couponName", couponName).getSingleResult();
+        } catch (NoResultException nre) {
             return null;
         }
     }
 
-    public CouponEntity getCouponByUuid(String couponId) {
+    //To get Coupon By Coupon Uuid from the db
+    public CouponEntity getCouponByUUID(final String couponUuid) {
         try {
-            return entityManager.createNamedQuery("couponByUuid", CouponEntity.class).setParameter("uuid", couponId)
-                    .getSingleResult();
-        } catch(NoResultException nre) {
+            return entityManager.createNamedQuery("getCouponByCouponUuid", CouponEntity.class)
+                    .setParameter("couponUuid", couponUuid).getSingleResult();
+        } catch (NoResultException nre) {
             return null;
         }
     }
